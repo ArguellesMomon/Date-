@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title>A Date With You 💕</title>
+
+    <!-- App icon if you have it -->
+    <link rel="apple-touch-icon" href="heart-icon.png">
+
+    <!-- iOS fullscreen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Retro font -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+        
+        body {
+            font-family: 'Press Start 2P', cursive;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+            background: url('hearts.gif') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+            transition: background 0.5s ease-in-out;
+            padding: 1rem;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 0;
+        }
+        /* Intro overlay */
+        
+        #intro-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 999;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            cursor: pointer;
+        }
+        
+        #intro-screen p {
+            animation: blink 1.2s step-start infinite
+        }
+        
+        @keyframes blink {
+            0%,
+            49%,
+            100% {
+                opacity: 1
+            }
+            50%,
+            99% {
+                opacity: 0
+            }
+        }
+        /* invitation centered */
+        
+        #invitation {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+            padding: 1rem;
+        }
+        
+        h1,
+        p,
+        h2 {
+            z-index: 1;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6)
+        }
+        
+        h1 {
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            margin-bottom: 0.5rem
+        }
+        
+        p,
+        h2 {
+            font-size: clamp(0.8rem, 3.5vw, 1.2rem);
+            margin: 0.5rem 0
+        }
+        
+        h2 {
+            animation: blink 1s step-start infinite
+        }
+        
+        .btn {
+            background: #ff4f81;
+            color: white;
+            padding: 14px 28px;
+            margin: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            transition: transform .2s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, .3);
+            min-width: min(200px, 80%);
+            z-index: 1;
+            position: relative;
+            word-break: break-word;
+        }
+        
+        .btn:active {
+            transform: scale(1.05)
+        }
+        
+        .invite-card {
+            background: rgba(255, 255, 255, .95);
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 12px;
+            display: none;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, .2);
+            animation: fadeIn .8s ease forwards;
+            max-width: 90%;
+            z-index: 1;
+            position: relative;
+            font-size: 0.9rem;
+            color: black;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(.8)
+            }
+            to {
+                opacity: 1;
+                transform: scale(1)
+            }
+        }
+        /* floating hearts (reused) */
+        
+        .hearts {
+            position: fixed;
+            top: -10px;
+            font-size: 24px;
+            animation: float 4s linear infinite;
+            color: #ff5d9e;
+            pointer-events: none;
+            z-index: 2
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1
+            }
+            100% {
+                transform: translateY(600px) rotate(360deg);
+                opacity: 0
+            }
+        }
+        /* Pixel heart (image fallback to emoji) */
+        
+        #pixel-heart {
+            width: 72px;
+            height: 72px;
+            margin-bottom: 1rem;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: heartbeat 1s infinite;
+            user-select: none;
+            /* background image (replace pixel-heart.png in repo) */
+            background: url('pixel-heart.png') no-repeat center center / contain;
+        }
+        /* emoji fallback (will show if image isn't present because content still rendered) */
+        
+        #pixel-heart .fallback {
+            font-size: 32px;
+            pointer-events: none
+        }
+        
+        @keyframes heartbeat {
+            0%,
+            100% {
+                transform: scale(1)
+            }
+            25% {
+                transform: scale(1.25)
+            }
+            50% {
+                transform: scale(1)
+            }
+        }
+        /* small screens */
+        
+        @media (max-width:500px) {
+            .btn {
+                padding: 12px 20px;
+                min-width: 70%
+            }
+            .invite-card {
+                font-size: 0.75rem;
+                padding: 15px
+            }
+            #pixel-heart {
+                width: 64px;
+                height: 64px
+            }
+        }
+        /* fade-out helper */
+        
+        .fade-out {
+            animation: fadeOut .45s forwards
+        }
+        
+        @keyframes fadeOut {
+            from {
+                opacity: 1
+            }
+            to {
+                opacity: 0;
+                visibility: hidden
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- intro (tap to reveal) -->
+    <div id="intro-screen" aria-hidden="false">
+        <p>👆 Tap to reveal your surprise 💖</p>
+    </div>
+
+    <!-- invitation (hidden until reveal) -->
+    <div id="invitation" style="display:none;">
+
+        <!-- pixel heart (click to speed it up) -->
+        <div id="pixel-heart" role="button" aria-label="Pixel heart">
+            <span class="fallback">💖</span>
+        </div>
+
+        <h1>Hey love 💖</h1>
+        <p>I have a question for you...</p>
+        <h2>Will you go on a date with me this Saturday?</h2>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;z-index:1">
+            <button class="btn" id="yesBtn">Yes</button>
+            <button class="btn" id="noBtn">No</button>
+        </div>
+
+        <div id="invite" class="invite-card" aria-hidden="true">
+            <h3>💌 You said YES! 💌</h3>
+            <p>📍 Place: Your Favorite Café</p>
+            <p>🗓 Date: This Saturday, 4:00 PM</p>
+            <p>💬 Can’t wait to see you. Dress comfy, I’ll handle the rest 💕</p>
+        </div>
+
+        <div id="score" style="color:white;font-size:1rem;position:fixed;top:10px;right:10px;z-index:2">❤️ Score: 0</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const intro = document.getElementById('intro-screen');
+            const invitation = document.getElementById('invitation');
+            const yesBtn = document.getElementById('yesBtn');
+            const noBtn = document.getElementById('noBtn');
+            const inviteCard = document.getElementById('invite');
+            const scoreEl = document.getElementById('score');
+            const pixelHeart = document.getElementById('pixel-heart');
+
+            const backgrounds = ['1.gif', '2.gif', 'hearts.gif', '3.gif'];
+            let currentBackground = 0;
+            let score = 0;
+
+            // ensure elements exist
+            function safeAdd(el, evt, fn) {
+                if (el) el.addEventListener(evt, fn);
+            }
+
+            // fade intro and reveal invitation
+            function revealInvitation() {
+                if (!intro) return;
+                intro.classList.add('fade-out');
+                intro.addEventListener('animationend', () => {
+                    intro.style.display = 'none';
+                    invitation.style.display = 'flex';
+                    // ensure pixel heart is visible now (if hidden earlier)
+                    if (pixelHeart) pixelHeart.style.visibility = 'visible';
+                }, {
+                    once: true
+                });
+            }
+            safeAdd(intro, 'click', revealInvitation);
+            safeAdd(intro, 'touchstart', (e) => {
+                e.preventDefault();
+                revealInvitation();
+            });
+
+            // show invite card and effects
+            function showInvite() {
+                score++;
+                if (scoreEl) scoreEl.innerText = `❤️ Score: ${score}`;
+                if (inviteCard) inviteCard.style.display = 'block';
+                launchHearts();
+                changeBackground();
+                // speed up heart for excitement
+                speedUpHeart(0.25);
+            }
+            safeAdd(yesBtn, 'click', showInvite);
+            safeAdd(yesBtn, 'touchstart', (e) => {
+                e.preventDefault();
+                showInvite();
+            });
+
+            // background changer
+            function changeBackground() {
+                currentBackground = (currentBackground + 1) % backgrounds.length;
+                // change background-image only (keeps overlay)
+                document.body.style.backgroundImage = `url('${backgrounds[currentBackground]}')`;
+                document.body.style.backgroundPosition = 'center center';
+                document.body.style.backgroundRepeat = 'no-repeat';
+                document.body.style.backgroundAttachment = 'fixed';
+                document.body.style.backgroundSize = 'cover';
+            }
+
+            // floating hearts effect
+            function launchHearts() {
+                for (let i = 0; i < 15; i++) {
+                    const heart = document.createElement('div');
+                    heart.className = 'hearts';
+                    heart.style.left = Math.random() * window.innerWidth + 'px';
+                    heart.innerHTML = '💖';
+                    document.body.appendChild(heart);
+                    const animationTime = Math.random() * 2 + 3;
+                    heart.style.animationDuration = animationTime + 's';
+                    setTimeout(() => heart.remove(), animationTime * 1000);
+                }
+            }
+
+            // runaway for No button
+            function runaway(btn) {
+                if (!btn) return;
+                btn.style.position = 'absolute';
+                const maxLeft = Math.max(10, window.innerWidth - btn.offsetWidth - 20);
+                const maxTop = Math.max(10, window.innerHeight - btn.offsetHeight - 20);
+                btn.style.left = Math.floor(Math.random() * maxLeft) + 'px';
+                btn.style.top = Math.floor(Math.random() * maxTop) + 'px';
+            }
+            safeAdd(noBtn, 'click', () => runaway(noBtn));
+            safeAdd(noBtn, 'touchstart', (e) => {
+                e.preventDefault();
+                runaway(noBtn);
+            });
+
+            // heartbeat control
+            let heartSpeed = 1.0; // seconds
+            function speedUpHeart(minSpeed = 0.35) {
+                if (!pixelHeart) return;
+                // decrease duration by 0.12s until minSpeed
+                heartSpeed = Math.max(minSpeed, heartSpeed - 0.12);
+                pixelHeart.style.animationDuration = heartSpeed + 's';
+                // also trigger floating hearts as feedback
+                launchHearts();
+            }
+            // click/tap the pixel heart to speed it up
+            safeAdd(pixelHeart, 'click', () => speedUpHeart());
+            safeAdd(pixelHeart, 'touchstart', (e) => {
+                e.preventDefault();
+                speedUpHeart();
+            });
+
+            // accessibility: if pixel-heart image isn't present, remove bg after a moment so fallback emoji visible
+            // optional check: attempt to preload image
+            (function checkPixelImage() {
+                const img = new Image();
+                img.src = 'pixel-heart.png';
+                img.onload = () => { /* image exists — nothing extra needed */ }
+                img.onerror = () => { /* image missing: keep emoji (fallback text) visible */ };
+            })();
+
+        });
+    </script>
+
+</body>
+
+</html>
