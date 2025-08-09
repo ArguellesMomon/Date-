@@ -133,18 +133,36 @@
         }
         
         .invite-card {
-            background: rgba(255, 255, 255, .95);
+            background: linear-gradient(135deg, #ff99cc, #ffccff);
+            /* romantic pink gradient */
             padding: 20px;
             margin-top: 20px;
-            border-radius: 12px;
+            border-radius: 0;
+            /* flat corners for pixel feel */
             display: none;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, .2);
+            border: 3px solid black;
+            box-shadow: 4px 4px 0 #000;
+            /* retro drop shadow */
             animation: fadeIn .8s ease forwards;
             max-width: 90%;
             z-index: 1;
             position: relative;
             font-size: 0.9rem;
             color: black;
+            font-family: 'Press Start 2P', cursive;
+            /* retro pixel font */
+        }
+        /* CRT screen scanline effect */
+        
+        .invite-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient( to bottom, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 2px, transparent 2px, transparent 4px);
+            pointer-events: none;
         }
         
         @keyframes fadeIn {
@@ -402,6 +420,41 @@
             })();
 
         });
+
+        let noSize = 1;
+
+        function shrinkNo(btn) {
+            noSize -= 0.1;
+            if (noSize > 0.2) {
+                btn.style.transform = `scale(${noSize})`;
+                runaway(btn);
+            } else {
+                btn.style.display = "none";
+            }
+        }
+
+        document.getElementById("noBtn").addEventListener("click", () => shrinkNo(noBtn));
+
+        let noMessages = ["Sure?", "Really?", "Think again?", "Please say yes 🥺"];
+        let clickCount = 0;
+        document.getElementById("noBtn").addEventListener("click", function() {
+            this.textContent = noMessages[clickCount % noMessages.length];
+            clickCount++;
+        });
+
+        let compliments = ["Cute", "Sweet", "Lovely", "Beautiful"];
+        setInterval(() => {
+            let word = document.createElement('div');
+            word.textContent = compliments[Math.floor(Math.random() * compliments.length)];
+            word.style.position = 'fixed';
+            word.style.left = Math.random() * window.innerWidth + 'px';
+            word.style.top = '0px';
+            word.style.color = 'pink';
+            word.style.fontSize = '1rem';
+            word.style.animation = 'float 4s linear';
+            document.body.appendChild(word);
+            setTimeout(() => word.remove(), 4000);
+        }, 2000);
     </script>
 
 </body>
