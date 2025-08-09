@@ -133,24 +133,26 @@
         }
         
         .invite-card {
-            background: linear-gradient(135deg, #ff99cc, #ffccff);
-            /* romantic pink gradient */
+            background: rgba(255, 255, 255, 0.95);
             padding: 20px;
             margin-top: 20px;
             border-radius: 0;
-            /* flat corners for pixel feel */
+            /* pixel look = no rounded corners */
             display: none;
-            border: 3px solid black;
-            box-shadow: 4px 4px 0 #000;
-            /* retro drop shadow */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, .2);
             animation: fadeIn .8s ease forwards;
             max-width: 90%;
             z-index: 1;
             position: relative;
             font-size: 0.9rem;
             color: black;
-            font-family: 'Press Start 2P', cursive;
-            /* retro pixel font */
+            /* retro border style */
+            border: 8px solid #ff4d88;
+            image-rendering: pixelated;
+            box-shadow: 0 0 0 4px #fff, /* white outline */
+            0 0 0 8px #ff4d88, /* pink outline */
+            0 0 20px rgba(255, 77, 136, 0.8);
+            /* glow */
         }
         /* CRT screen scanline effect */
         
@@ -309,7 +311,7 @@
             const scoreEl = document.getElementById('score');
             const pixelHeart = document.getElementById('pixel-heart');
 
-            const backgrounds = ['1.gif', '2.gif', 'hearts.gif', '3.gif'];
+            const backgrounds = ['1.png', '2.jpg', '3.png'];
             let currentBackground = 0;
             let score = 0;
 
