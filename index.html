@@ -111,21 +111,23 @@
         }
         
         .btn {
-            background: #ff4f81;
-            color: white;
-            padding: 14px 28px;
-            margin: 8px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
+            --bg: hsl(325, 100%, 50%);
+            --fg: #ffffff;
+            --accent: #ffd166;
             font-family: 'Press Start 2P', cursive;
-            font-size: clamp(0.8rem, 3vw, 1rem);
-            transition: transform .2s;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, .3);
-            min-width: min(200px, 80%);
-            z-index: 1;
+            padding: 10px 18px;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(180deg, var(--bg), #ffb6d5);
+            color: var(--fg);
+            border-left: 6px solid #ff7eb1;
+            border-top: 6px solid #ff7eb1;
+            box-shadow: 6px 6px 0 0 #ff5d9e inset, 0 8px 0 0 #ff5d9e;
+            margin-top: 12px;
+            z-index: 2;
             position: relative;
-            word-break: break-word;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .btn:active {
@@ -233,6 +235,54 @@
                 transform: scale(1)
             }
         }
+        /* retro "More Details" button (8-bit/pixel style) */
+        
+        .retro-btn {
+            --bg: hsl(325, 100%, 50%);
+            --fg: #ffffff;
+            --accent: #ffd166;
+            font-family: 'Press Start 2P', cursive;
+            padding: 10px 18px;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(180deg, var(--bg), #ffb6d5);
+            color: var(--fg);
+            border-left: 6px solid #ff7eb1;
+            border-top: 6px solid #ff7eb1;
+            box-shadow: 6px 6px 0 0 #ff5d9e inset, 0 8px 0 0 #ff5d9e;
+            margin-top: 12px;
+            z-index: 2;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .retro-btn:focus {
+            outline: 3px dashed #ffd166;
+            outline-offset: 4px;
+        }
+        
+        .retro-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: none;
+        }
+        
+        .more-details {
+            display: none;
+            margin-top: 12px;
+            text-align: left;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            white-space: pre-line;
+        }
+        /* typing cursor */
+        
+        .typing-cursor::after {
+            content: "|";
+            margin-left: 6px;
+            opacity: 1;
+            animation: blink 1s step-end infinite;
+        }
         /* small screens */
         
         @media (max-width:500px) {
@@ -264,6 +314,18 @@
                 visibility: hidden
             }
         }
+        /* little accessibility helper for reduced-motion */
+        
+        @media (prefers-reduced-motion: reduce) {
+            .hearts,
+            #pixel-heart,
+            .invite-card {
+                animation: none !important;
+            }
+            .typing-cursor::after {
+                display: none;
+            }
+        }
     </style>
 </head>
 
@@ -284,7 +346,7 @@
 
         <h1>Hey My Rein,</h1>
         <p>I have a question for you...</p>
-        <h2>Are you willing to go on a date with me this Saturday?</h2>
+        <h2>Will you on a date with me?</h2>
 
         <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;z-index:1">
             <button class="btn" id="yesBtn">Yes</button>
@@ -292,10 +354,16 @@
         </div>
 
         <div id="invite" class="invite-card" aria-hidden="true">
-            <h3> You said YES! </h3>
-            <p>📍 Place: ----</p>
-            <p>🗓 Date: This Saturday, -:-- PM</p>
-            <p>💬 Can’t wait to see you. Dress comfy, I’ll handle the rest 💕</p>
+            <h3 class="typing-line" data-text="You said YES!" data-speed="40"></h3>
+            <p class="typing-line" data-text="📍 Place:---" data-speed="20"></p>
+            <p class="typing-line" data-text="🗓 Date: ---" data-speed="20"></p>
+            <p class="typing-line" data-text="💬 Can’t wait to see you. Dress comfy, I’ll handle the rest 💕" data-speed="10"></p>
+
+            <button class="retro-btn" id="moreBtn" aria-expanded="false" aria-controls="moreText">MORE DETAILS</button>
+
+            <div id="moreText" class="more-details" role="region" aria-hidden="true">
+                • I’ll pick you up at your house by 6:00 PM. • Plan: light dinner, a walk by the pier, and a surprise dessert. • If you're allergic to anything, tell me and I’ll adjust the menu. • I reserved a small spot so it’ll be cozy and private.
+            </div>
         </div>
 
         <div id="score" style="color:white;font-size:1rem;position:fixed;top:10px;right:10px;z-index:2">❤️ Score: 0</div>
@@ -310,6 +378,8 @@
             const inviteCard = document.getElementById('invite');
             const scoreEl = document.getElementById('score');
             const pixelHeart = document.getElementById('pixel-heart');
+            const moreBtn = document.getElementById('moreBtn');
+            const moreText = document.getElementById('moreText');
 
             const backgrounds = ['1.jpg', '2.jpg', '3.jpg'];
             let currentBackground = 0;
@@ -339,15 +409,61 @@
                 revealInvitation();
             });
 
+            // typing animation helper
+            function typeText(el, text, speed = 40, cb) {
+                if (!el) return;
+                el.classList.add('typing-cursor');
+                el.textContent = '';
+                let i = 0;
+                const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (reduced) {
+                    el.textContent = text; // no animation for reduced motion
+                    el.classList.remove('typing-cursor');
+                    if (cb) cb();
+                    return;
+                }
+                const timer = setInterval(() => {
+                    el.textContent += text.charAt(i);
+                    i++;
+                    if (i >= text.length) {
+                        clearInterval(timer);
+                        el.classList.remove('typing-cursor');
+                        if (cb) cb();
+                    }
+                }, speed);
+                // return the timer id for possible cancellation
+                return timer;
+            }
+
+            // run sequential typing for all lines inside invite card
+            function runTypingSequence() {
+                const lines = inviteCard.querySelectorAll('.typing-line');
+                let idx = 0;
+
+                function next() {
+                    if (idx >= lines.length) return;
+                    const el = lines[idx];
+                    const text = el.dataset.text || '';
+                    const speed = parseInt(el.dataset.speed, 10) || 30;
+                    typeText(el, text, speed, () => {
+                        idx++;
+                        setTimeout(next, 300);
+                    });
+                }
+                next();
+            }
+
             // show invite card and effects
             function showInvite() {
                 score++;
                 if (scoreEl) scoreEl.innerText = `❤️ Score: ${score}`;
-                if (inviteCard) inviteCard.style.display = 'block';
-                launchHearts();
+                if (inviteCard) {
+                    inviteCard.style.display = 'block';
+                    inviteCard.setAttribute('aria-hidden', 'false');
+                    inviteCard.querySelectorAll('.typing-line').forEach(n => n.textContent = '');
+                    runTypingSequence();
+                }
                 changeBackground();
-                // speed up heart for excitement
-                speedUpHeart(0.25);
             }
             safeAdd(yesBtn, 'click', showInvite);
             safeAdd(yesBtn, 'touchstart', (e) => {
@@ -367,18 +483,7 @@
             }
 
             // floating hearts effect
-            function launchHearts() {
-                for (let i = 0; i < 15; i++) {
-                    const heart = document.createElement('div');
-                    heart.className = 'hearts';
-                    heart.style.left = Math.random() * window.innerWidth + 'px';
-                    heart.innerHTML = '💖';
-                    document.body.appendChild(heart);
-                    const animationTime = Math.random() * 2 + 3;
-                    heart.style.animationDuration = animationTime + 's';
-                    setTimeout(() => heart.remove(), animationTime * 1000);
-                }
-            }
+
 
             // runaway for No button
             function runaway(btn) {
@@ -410,6 +515,31 @@
             safeAdd(pixelHeart, 'touchstart', (e) => {
                 e.preventDefault();
                 speedUpHeart();
+            });
+
+            // More details toggle (keyboard accessible)
+            function toggleMore() {
+                const expanded = moreBtn.getAttribute('aria-expanded') === 'true';
+                moreBtn.setAttribute('aria-expanded', String(!expanded));
+                if (expanded) {
+                    moreText.style.display = 'none';
+                    moreText.setAttribute('aria-hidden', 'true');
+                } else {
+                    moreText.style.display = 'block';
+                    moreText.setAttribute('aria-hidden', 'false');
+                    // gently focus the details for screen readers
+                    moreText.setAttribute('tabindex', '-1');
+                    moreText.focus({
+                        preventScroll: true
+                    });
+                }
+            }
+            safeAdd(moreBtn, 'click', toggleMore);
+            safeAdd(moreBtn, 'keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleMore();
+                }
             });
 
             // accessibility: if pixel-heart image isn't present, remove bg after a moment so fallback emoji visible
