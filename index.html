@@ -314,6 +314,7 @@
                 visibility: hidden
             }
         }
+        /* little accessibility helper for reduced-motion */
         
         @media (prefers-reduced-motion: reduce) {
             .hearts,
@@ -328,13 +329,9 @@
         
         .typing-line {
             font-size: 0.85rem;
+            /* smaller size */
             line-height: 1.4;
-        }
-        
-        .typing-line:first-of-type {
-            font-size: 1rem;
-            /* heading slightly larger */
-            font-weight: bold;
+            /* keep it readable */
         }
     </style>
 </head>
