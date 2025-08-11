@@ -314,7 +314,6 @@
                 visibility: hidden
             }
         }
-        /* little accessibility helper for reduced-motion */
         
         @media (prefers-reduced-motion: reduce) {
             .hearts,
@@ -325,6 +324,17 @@
             .typing-cursor::after {
                 display: none;
             }
+        }
+        
+        .typing-line {
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        
+        .typing-line:first-of-type {
+            font-size: 1rem;
+            /* heading slightly larger */
+            font-weight: bold;
         }
     </style>
 </head>
@@ -357,7 +367,7 @@
             <h3 class="typing-line" data-text="You said YES!" data-speed="40"></h3>
             <p class="typing-line" data-text="📍 Place:---" data-speed="20"></p>
             <p class="typing-line" data-text="🗓 Date: ---" data-speed="20"></p>
-            <p class="typing-line" data-text="💬 Can’t wait to see you. Dress comfy, I’ll handle the rest 💕" data-speed="10"></p>
+            <p class="typing-line" data-text="💬 Can’t wait to see you. Dress comfy, I’ll handle the rest 💕" data-speed="30"></p>
 
             <button class="retro-btn" id="moreBtn" aria-expanded="false" aria-controls="moreText">MORE DETAILS</button>
 
@@ -482,9 +492,6 @@
                 document.body.style.backgroundSize = 'cover';
             }
 
-            // floating hearts effect
-
-
             // runaway for No button
             function runaway(btn) {
                 if (!btn) return;
@@ -567,7 +574,7 @@
 
         document.getElementById("noBtn").addEventListener("click", () => shrinkNo(noBtn));
 
-        let noMessages = ["Sure?", "Really?", "Think again?", "Please say yes 🥺"];
+        let noMessages = ["Sure?", "Really?", "Try again", "Final Answer?", "Think again?", "Please say yes 🥺", "Magdadabog ako", "I love you"];
         let clickCount = 0;
         document.getElementById("noBtn").addEventListener("click", function() {
             this.textContent = noMessages[clickCount % noMessages.length];
