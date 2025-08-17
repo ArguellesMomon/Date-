@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>A Date With You 💕</title>
 
-    <!-- App icon if you have it -->
+    <!-- App Icon -->
     <link rel="apple-touch-icon" href="heart-icon.png">
 
     <!-- iOS fullscreen -->
@@ -17,11 +17,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <style>
+        /* Reset + Base */
+        
         html,
         body {
             height: 100%;
             margin: 0;
-            padding: 0
+            padding: 0;
         }
         
         body {
@@ -29,8 +31,7 @@
             text-align: center;
             color: white;
             overflow: hidden;
-            background: url('hearts.gif') no-repeat center center fixed;
-            background-size: cover;
+            background: url('hearts.gif') no-repeat center/cover fixed;
             position: relative;
             transition: background 0.5s ease-in-out;
             padding: 1rem;
@@ -43,25 +44,43 @@
             background: rgba(0, 0, 0, 0.3);
             z-index: 0;
         }
-        /* Intro overlay */
+        /* Shared Text Styles */
+        
+        h1,
+        h2,
+        p {
+            z-index: 1;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
+            margin: 0.5rem 0;
+        }
+        
+        h1 {
+            font-size: clamp(1rem, 4vw, 1.5rem);
+        }
+        
+        p,
+        h2 {
+            font-size: clamp(0.8rem, 3.5vw, 1.2rem);
+        }
+        /* Intro Overlay */
         
         #intro-screen {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.85);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            z-index: 999;
+            background: rgba(0, 0, 0, 0.85);
             color: white;
             text-align: center;
             padding: 1rem;
             cursor: pointer;
+            z-index: 999;
         }
         
         #intro-screen p {
-            animation: blink 1.2s step-start infinite
+            animation: blink 1.2s step-start infinite;
         }
         
         @keyframes blink {
@@ -75,46 +94,29 @@
                 opacity: 0
             }
         }
-        /* invitation centered */
+        /* Invitation */
         
         #invitation {
             position: fixed;
             inset: 0;
-            display: flex;
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 1;
             padding: 1rem;
-        }
-        
-        h1,
-        p,
-        h2 {
             z-index: 1;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6)
-        }
-        
-        h1 {
-            font-size: clamp(1rem, 4vw, 1.5rem);
-            margin-bottom: 0.5rem
-        }
-        
-        p,
-        h2 {
-            font-size: clamp(0.8rem, 3.5vw, 1.2rem);
-            margin: 0.5rem 0
         }
         
         h2 {
-            animation: blink 1s step-start infinite
+            animation: blink 1s step-start infinite;
         }
+        /* Buttons (shared for retro + normal) */
         
-        .btn {
+        .btn,
+        .retro-btn {
             --bg: hsl(325, 100%, 50%);
-            --fg: #ffffff;
-            --accent: #ffd166;
-            font-family: 'Press Start 2P', cursive;
+            --fg: #fff;
+            font-family: inherit;
             padding: 10px 18px;
             border: none;
             cursor: pointer;
@@ -130,42 +132,43 @@
             letter-spacing: 1px;
         }
         
-        .btn:active {
-            transform: scale(1.05)
+        .btn:active,
+        .retro-btn:active {
+            transform: scale(1.05);
+        }
+        /* Retro button extras */
+        
+        .retro-btn:focus {
+            outline: 3px dashed #ffd166;
+            outline-offset: 4px;
         }
         
+        .retro-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: none;
+        }
+        /* Invite Card */
+        
         .invite-card {
+            display: none;
+            position: relative;
             background: rgba(255, 255, 255, 0.95);
             padding: 20px;
             margin-top: 20px;
-            border-radius: 0;
-            /* pixel look = no rounded corners */
-            display: none;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, .2);
-            animation: fadeIn .8s ease forwards;
             max-width: 90%;
-            z-index: 1;
-            position: relative;
             font-size: 0.9rem;
             color: black;
-            /* retro border style */
             border: 8px solid #ff4d88;
             image-rendering: pixelated;
-            box-shadow: 0 0 0 4px #fff, /* white outline */
-            0 0 0 8px #ff4d88, /* pink outline */
-            0 0 20px rgba(255, 77, 136, 0.8);
-            /* glow */
+            box-shadow: 0 0 0 4px #fff, 0 0 0 8px #ff4d88, 0 0 20px rgba(255, 77, 136, 0.8);
+            animation: fadeIn .8s ease forwards;
         }
-        /* CRT screen scanline effect */
         
         .invite-card::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient( to bottom, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 2px, transparent 2px, transparent 4px);
+            inset: 0;
+            background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 2px, transparent 2px, transparent 4px);
             pointer-events: none;
         }
         
@@ -179,48 +182,24 @@
                 transform: scale(1)
             }
         }
-        /* floating hearts (reused) */
-        
-        .hearts {
-            position: fixed;
-            top: -10px;
-            font-size: 24px;
-            animation: float 4s linear infinite;
-            color: #ff5d9e;
-            pointer-events: none;
-            z-index: 2
-        }
-        
-        @keyframes float {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 1
-            }
-            100% {
-                transform: translateY(600px) rotate(360deg);
-                opacity: 0
-            }
-        }
-        /* Pixel heart (image fallback to emoji) */
+        /* Pixel Heart */
         
         #pixel-heart {
             width: 72px;
             height: 72px;
             margin-bottom: 1rem;
-            z-index: 1;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: url('pixel-heart.png') no-repeat center/contain;
             animation: heartbeat 1s infinite;
             user-select: none;
-            /* background image (replace pixel-heart.png in repo) */
-            background: url('pixel-heart.png') no-repeat center center / contain;
+            z-index: 1;
         }
-        /* emoji fallback (will show if image isn't present because content still rendered) */
         
         #pixel-heart .fallback {
             font-size: 32px;
-            pointer-events: none
+            pointer-events: none;
         }
         
         @keyframes heartbeat {
@@ -235,37 +214,38 @@
                 transform: scale(1)
             }
         }
-        /* retro "More Details" button (8-bit/pixel style) */
+        /* Floating Hearts / Compliments */
         
-        .retro-btn {
-            --bg: hsl(325, 100%, 50%);
-            --fg: #ffffff;
-            --accent: #ffd166;
-            font-family: 'Press Start 2P', cursive;
-            padding: 10px 18px;
-            border: none;
-            cursor: pointer;
-            background: linear-gradient(180deg, var(--bg), #ffb6d5);
-            color: var(--fg);
-            border-left: 6px solid #ff7eb1;
-            border-top: 6px solid #ff7eb1;
-            box-shadow: 6px 6px 0 0 #ff5d9e inset, 0 8px 0 0 #ff5d9e;
-            margin-top: 12px;
+        .hearts,
+        .compliment {
+            position: fixed;
+            top: -10px;
+            font-size: 1rem;
+            color: #ff5d9e;
+            animation: float 4s linear forwards;
+            pointer-events: none;
             z-index: 2;
-            position: relative;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
         
-        .retro-btn:focus {
-            outline: 3px dashed #ffd166;
-            outline-offset: 4px;
+        @keyframes float {
+            to {
+                transform: translateY(600px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        /* Typing Effect */
+        
+        .typing-cursor::after {
+            content: "|";
+            margin-left: 6px;
+            animation: blink 1s step-end infinite;
         }
         
-        .retro-btn:active {
-            transform: translate(4px, 4px);
-            box-shadow: none;
+        .typing-line {
+            font-size: 0.85rem;
+            line-height: 1.4;
         }
+        /* Details */
         
         .more-details {
             display: none;
@@ -275,46 +255,19 @@
             line-height: 1.4;
             white-space: pre-line;
         }
-        /* typing cursor */
-        
-        .typing-cursor::after {
-            content: "|";
-            margin-left: 6px;
-            opacity: 1;
-            animation: blink 1s step-end infinite;
-        }
-        /* small screens */
-        
-        @media (max-width:500px) {
-            .btn {
-                padding: 12px 20px;
-                min-width: 70%
-            }
-            .invite-card {
-                font-size: 0.75rem;
-                padding: 15px
-            }
-            #pixel-heart {
-                width: 64px;
-                height: 64px
-            }
-        }
-        /* fade-out helper */
+        /* Fade-out helper */
         
         .fade-out {
-            animation: fadeOut .45s forwards
+            animation: fadeOut .45s forwards;
         }
         
         @keyframes fadeOut {
-            from {
-                opacity: 1
-            }
             to {
                 opacity: 0;
-                visibility: hidden
+                visibility: hidden;
             }
         }
-        /* little accessibility helper for reduced-motion */
+        /* Accessibility: reduced motion */
         
         @media (prefers-reduced-motion: reduce) {
             .hearts,
@@ -326,27 +279,33 @@
                 display: none;
             }
         }
+        /* Small screens */
         
-        .typing-line {
-            font-size: 0.85rem;
-            /* smaller size */
-            line-height: 1.4;
-            /* keep it readable */
+        @media (max-width:500px) {
+            .btn {
+                padding: 12px 20px;
+                min-width: 70%;
+            }
+            .invite-card {
+                font-size: 0.75rem;
+                padding: 15px;
+            }
+            #pixel-heart {
+                width: 64px;
+                height: 64px;
+            }
         }
     </style>
 </head>
 
 <body>
-
-    <!-- intro (tap to reveal) -->
+    <!-- Intro -->
     <div id="intro-screen" aria-hidden="false">
         <p>👆 Tap to reveal your surprise 💖</p>
     </div>
 
-    <!-- invitation (hidden until reveal) -->
-    <div id="invitation" style="display:none;">
-
-        <!-- pixel heart (click to speed it up) -->
+    <!-- Invitation -->
+    <div id="invitation" aria-hidden="true">
         <div id="pixel-heart" role="button" aria-label="Pixel heart">
             <span class="fallback">💖</span>
         </div>
@@ -371,10 +330,9 @@
             <div id="moreText" class="more-details" role="region" aria-hidden="true">
                 • I’ll pick you up at your place by 6:00 PM. <br> • Plan: light dinner, a walk by the pier, and a surprise dessert. <br> • If you're allergic to anything, tell me and I’ll adjust the menu.
             </div>
-
         </div>
 
-        <div id="score" style="color:white;font-size:1rem;position:fixed;top:10px;right:10px;z-index:2">❤️ Score: 0</div>
+        <div id="score" style="position:fixed;top:10px;right:10px;font-size:1rem;z-index:2">❤️ Score: 0</div>
     </div>
 
     <script>
@@ -390,210 +348,154 @@
             const moreText = document.getElementById('moreText');
 
             const backgrounds = ['1.jpg', '2.jpg', '3.jpg'];
-            let currentBackground = 0;
-            let score = 0;
+            let currentBackground = 0,
+                score = 0,
+                noSize = 1,
+                clickCount = 0;
 
-            // ensure elements exist
-            function safeAdd(el, evt, fn) {
-                if (el) el.addEventListener(evt, fn);
-            }
+            const noMessages = ["Sure?", "Really?", "Try again", "Final Answer?", "Think again?", "Please say yes 🥺", "Magdadabog ako", "I love you"];
+            const compliments = ["Cute", "Sweet", "Lovely", "Beautiful"];
 
-            // fade intro and reveal invitation
-            function revealInvitation() {
-                if (!intro) return;
+            const safeAdd = (el, evt, fn) => el && el.addEventListener(evt, fn);
+
+            /* Reveal Invitation */
+            const revealInvitation = () => {
                 intro.classList.add('fade-out');
                 intro.addEventListener('animationend', () => {
-                    intro.style.display = 'none';
+                    intro.remove();
                     invitation.style.display = 'flex';
-                    // ensure pixel heart is visible now (if hidden earlier)
-                    if (pixelHeart) pixelHeart.style.visibility = 'visible';
+                    invitation.setAttribute('aria-hidden', 'false');
                 }, {
                     once: true
                 });
-            }
+            };
             safeAdd(intro, 'click', revealInvitation);
-            safeAdd(intro, 'touchstart', (e) => {
+            safeAdd(intro, 'touchstart', e => {
                 e.preventDefault();
                 revealInvitation();
             });
 
-            // typing animation helper
-            function typeText(el, text, speed = 40, cb) {
+            /* Typing Animation */
+            const typeText = (el, text, speed, cb) => {
                 if (!el) return;
                 el.classList.add('typing-cursor');
                 el.textContent = '';
                 let i = 0;
                 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                 if (reduced) {
-                    el.textContent = text; // no animation for reduced motion
+                    el.textContent = text;
                     el.classList.remove('typing-cursor');
-                    if (cb) cb();
+                    if (typeof cb === "function") cb();
                     return;
                 }
                 const timer = setInterval(() => {
-                    el.textContent += text.charAt(i);
-                    i++;
+                    el.textContent += text[i++];
                     if (i >= text.length) {
                         clearInterval(timer);
                         el.classList.remove('typing-cursor');
-                        if (cb) cb();
+
                     }
                 }, speed);
-                // return the timer id for possible cancellation
-                return timer;
-            }
-
-            // run sequential typing for all lines inside invite card
-            function runTypingSequence() {
+            };
+            const runTypingSequence = () => {
                 const lines = inviteCard.querySelectorAll('.typing-line');
                 let idx = 0;
-
-                function next() {
+                const next = () => {
                     if (idx >= lines.length) return;
-                    const el = lines[idx];
-                    const text = el.dataset.text || '';
-                    const speed = parseInt(el.dataset.speed, 10) || 30;
-                    typeText(el, text, speed, () => {
-                        idx++;
-                        setTimeout(next, 300);
-                    });
-                }
+                    const el = lines[idx++];
+                    typeText(el, el.dataset.text || '', +el.dataset.speed || 30, () => setTimeout(next, 300));
+                };
                 next();
-            }
+            };
 
-            // show invite card and effects
-            function showInvite() {
+            /* Show Invite */
+            const showInvite = () => {
                 score++;
-                if (scoreEl) scoreEl.innerText = `❤️ Score: ${score}`;
-                if (inviteCard) {
-                    inviteCard.style.display = 'block';
-                    inviteCard.setAttribute('aria-hidden', 'false');
-                    inviteCard.querySelectorAll('.typing-line').forEach(n => n.textContent = '');
-                    runTypingSequence();
-                }
+                scoreEl.textContent = `❤️ Score: ${score}`;
+                inviteCard.style.display = 'block';
+                inviteCard.setAttribute('aria-hidden', 'false');
+                inviteCard.querySelectorAll('.typing-line').forEach(n => n.textContent = '');
+                runTypingSequence();
                 changeBackground();
-            }
+            };
             safeAdd(yesBtn, 'click', showInvite);
-            safeAdd(yesBtn, 'touchstart', (e) => {
+            safeAdd(yesBtn, 'touchstart', e => {
                 e.preventDefault();
                 showInvite();
             });
 
-            // background changer
-            function changeBackground() {
+            /* Background Switcher */
+            const changeBackground = () => {
                 currentBackground = (currentBackground + 1) % backgrounds.length;
-                // change background-image only (keeps overlay)
                 document.body.style.backgroundImage = `url('${backgrounds[currentBackground]}')`;
-                document.body.style.backgroundPosition = 'center center';
-                document.body.style.backgroundRepeat = 'no-repeat';
-                document.body.style.backgroundAttachment = 'fixed';
-                document.body.style.backgroundSize = 'cover';
-            }
+            };
 
-            // runaway for No button
-            function runaway(btn) {
-                if (!btn) return;
+            /* Runaway "No" button */
+            const runaway = btn => {
                 btn.style.position = 'absolute';
-                const maxLeft = Math.max(10, window.innerWidth - btn.offsetWidth - 20);
-                const maxTop = Math.max(10, window.innerHeight - btn.offsetHeight - 20);
-                btn.style.left = Math.floor(Math.random() * maxLeft) + 'px';
-                btn.style.top = Math.floor(Math.random() * maxTop) + 'px';
-            }
+                btn.style.left = Math.random() * (window.innerWidth - btn.offsetWidth - 20) + 'px';
+                btn.style.top = Math.random() * (window.innerHeight - btn.offsetHeight - 20) + 'px';
+            };
             safeAdd(noBtn, 'click', () => runaway(noBtn));
-            safeAdd(noBtn, 'touchstart', (e) => {
+            safeAdd(noBtn, 'touchstart', e => {
                 e.preventDefault();
                 runaway(noBtn);
             });
 
-            // heartbeat control
-            let heartSpeed = 1.0; // seconds
-            function speedUpHeart(minSpeed = 0.35) {
-                if (!pixelHeart) return;
-                // decrease duration by 0.12s until minSpeed
-                heartSpeed = Math.max(minSpeed, heartSpeed - 0.12);
+            /* Shrink "No" + Cycle Messages */
+            safeAdd(noBtn, 'click', () => {
+                noSize = Math.max(0.2, noSize - 0.1);
+                noBtn.style.transform = `scale(${noSize})`;
+                noBtn.textContent = noMessages[clickCount++ % noMessages.length];
+                if (noSize <= 0.2) noBtn.style.display = "none";
+            });
+
+            /* Pixel Heart Speed Control */
+            let heartSpeed = 1.0;
+            const speedUpHeart = () => {
+                heartSpeed = Math.max(0.35, heartSpeed - 0.12);
                 pixelHeart.style.animationDuration = heartSpeed + 's';
-                // also trigger floating hearts as feedback
-                launchHearts();
-            }
-            // click/tap the pixel heart to speed it up
-            safeAdd(pixelHeart, 'click', () => speedUpHeart());
-            safeAdd(pixelHeart, 'touchstart', (e) => {
+                launchCompliment();
+            };
+            safeAdd(pixelHeart, 'click', speedUpHeart);
+            safeAdd(pixelHeart, 'touchstart', e => {
                 e.preventDefault();
                 speedUpHeart();
             });
 
-            // More details toggle (keyboard accessible)
-            function toggleMore() {
+            /* Compliment Floating */
+            const launchCompliment = () => {
+                const word = document.createElement('div');
+                word.className = 'compliment';
+                word.textContent = compliments[Math.floor(Math.random() * compliments.length)];
+                word.style.left = Math.random() * window.innerWidth + 'px';
+                document.body.appendChild(word);
+                setTimeout(() => word.remove(), 4000);
+            };
+            setInterval(launchCompliment, 2000);
+
+            /* More Details Toggle */
+            const toggleMore = () => {
                 const expanded = moreBtn.getAttribute('aria-expanded') === 'true';
-                moreBtn.setAttribute('aria-expanded', String(!expanded));
-                if (expanded) {
-                    moreText.style.display = 'none';
-                    moreText.setAttribute('aria-hidden', 'true');
-                } else {
-                    moreText.style.display = 'block';
-                    moreText.setAttribute('aria-hidden', 'false');
-                    // gently focus the details for screen readers
+                moreBtn.setAttribute('aria-expanded', !expanded);
+                moreText.style.display = expanded ? 'none' : 'block';
+                moreText.setAttribute('aria-hidden', expanded);
+                if (!expanded) {
                     moreText.setAttribute('tabindex', '-1');
                     moreText.focus({
                         preventScroll: true
                     });
                 }
-            }
+            };
             safeAdd(moreBtn, 'click', toggleMore);
-            safeAdd(moreBtn, 'keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
+            safeAdd(moreBtn, 'keydown', e => {
+                if (['Enter', ' '].includes(e.key)) {
                     e.preventDefault();
                     toggleMore();
                 }
             });
-
-            // accessibility: if pixel-heart image isn't present, remove bg after a moment so fallback emoji visible
-            // optional check: attempt to preload image
-            (function checkPixelImage() {
-                const img = new Image();
-                img.src = 'pixel-heart.png';
-                img.onload = () => { /* image exists — nothing extra needed */ }
-                img.onerror = () => { /* image missing: keep emoji (fallback text) visible */ };
-            })();
-
         });
-
-        let noSize = 1;
-
-        function shrinkNo(btn) {
-            noSize -= 0.1;
-            if (noSize > 0.2) {
-                btn.style.transform = `scale(${noSize})`;
-                runaway(btn);
-            } else {
-                btn.style.display = "none";
-            }
-        }
-
-        document.getElementById("noBtn").addEventListener("click", () => shrinkNo(noBtn));
-
-        let noMessages = ["Sure?", "Really?", "Try again", "Final Answer?", "Think again?", "Please say yes 🥺", "Magdadabog ako", "I love you"];
-        let clickCount = 0;
-        document.getElementById("noBtn").addEventListener("click", function() {
-            this.textContent = noMessages[clickCount % noMessages.length];
-            clickCount++;
-        });
-
-        let compliments = ["Cute", "Sweet", "Lovely", "Beautiful"];
-        setInterval(() => {
-            let word = document.createElement('div');
-            word.textContent = compliments[Math.floor(Math.random() * compliments.length)];
-            word.style.position = 'fixed';
-            word.style.left = Math.random() * window.innerWidth + 'px';
-            word.style.top = '0px';
-            word.style.color = 'pink';
-            word.style.fontSize = '1rem';
-            word.style.animation = 'float 4s linear';
-            document.body.appendChild(word);
-            setTimeout(() => word.remove(), 4000);
-        }, 2000);
     </script>
-
 </body>
 
 </html>
