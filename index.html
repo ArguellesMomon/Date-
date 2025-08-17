@@ -78,10 +78,8 @@
             cursor: pointer;
             z-index: 999;
         }
-        
-        #intro-screen p {
-            animation: blink 1.2s step-start infinite;
-        }
+        /* IMPORTANT: remove blinking on intro text, keep typewriter caret only */
+        /* Typing caret blink (used by .typing-cursor) */
         
         @keyframes blink {
             0%,
@@ -106,6 +104,7 @@
             padding: 1rem;
             z-index: 1;
         }
+        /* You can keep this blink on the H2 if you want the retro feel in the invite */
         
         h2 {
             animation: blink 1s step-start infinite;
@@ -168,7 +167,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 2px, transparent 2px, transparent 4px);
+            background: repeating-linear-gradient( to bottom, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 2px, transparent 2px, transparent 4px);
             pointer-events: none;
         }
         
@@ -239,11 +238,14 @@
             content: "|";
             margin-left: 6px;
             animation: blink 1s step-end infinite;
+            /* caret blink only */
         }
         
         .typing-line {
             font-size: 0.85rem;
             line-height: 1.4;
+            white-space: pre-wrap;
+            /* preserve your message spacing */
         }
         /* Details */
         
@@ -295,13 +297,38 @@
                 height: 64px;
             }
         }
+        /* Hint: no more blinking; just reveal after typing */
+        /* Intro Overlay */
+        
+        #intro-screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            cursor: pointer;
+            z-index: 999;
+        }
+        /* Only hide the tap hint initially */
+        
+        #tap-hint {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
     <!-- Intro -->
     <div id="intro-screen" aria-hidden="false">
-        <p>👆 Tap to reveal your surprise 💖</p>
+        <p id="intro-message" class="typing-line" aria-live="polite" aria-atomic="true" data-text="To my Rein, I know I’m not great with messages, but I just want to tell you how thankful I am for having you in my life. Words can’t justify the feelings I want to express. Yet, let this short message turn what I feel into words. You make even the simplest days feel special, I love how you make me feel special, which I have not felt in a long time. Thank you for being my safe place, my happiness, and one of my greatest treasures. No matter what happens, I want you to know that I’ll always choose you and appreciate you."
+            data-speed="40"></p>
+
+        <p id="tap-hint" style="display:none; margin-top:1.5rem;">👆 Tap to reveal your surprise 💖</p>
     </div>
 
     <!-- Invitation -->
@@ -312,7 +339,7 @@
 
         <h1>Hey My Rein,</h1>
         <p>I have a question for you...</p>
-        <h2>Will you on a date with me?</h2>
+        <h2>Will you go on a date with me?</h2>
 
         <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;z-index:1">
             <button class="btn" id="yesBtn">Yes</button>
@@ -346,6 +373,8 @@
             const pixelHeart = document.getElementById('pixel-heart');
             const moreBtn = document.getElementById('moreBtn');
             const moreText = document.getElementById('moreText');
+            const introMessage = document.getElementById('intro-message');
+            const tapHint = document.getElementById('tap-hint');
 
             const backgrounds = ['1.jpg', '2.jpg', '3.jpg'];
             let currentBackground = 0,
@@ -357,6 +386,41 @@
             const compliments = ["Cute", "Sweet", "Lovely", "Beautiful"];
 
             const safeAdd = (el, evt, fn) => el && el.addEventListener(evt, fn);
+
+            /* Typing Animation */
+            const typeText = (el, text, speed, cb) => {
+                if (!el) return;
+                el.classList.add('typing-cursor');
+                el.textContent = '';
+                let i = 0;
+                const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (reduced) {
+                    el.textContent = text;
+                    el.classList.remove('typing-cursor');
+                    if (typeof cb === "function") cb();
+                    return;
+                }
+                const timer = setInterval(() => {
+                    el.textContent += text[i++] || '';
+                    if (i >= text.length) {
+                        clearInterval(timer);
+                        el.classList.remove('typing-cursor');
+                        if (typeof cb === "function") cb();
+                    }
+                }, speed);
+            };
+
+            /* Run Intro Typing (replaces blink) */
+            const runIntroTyping = () => {
+                typeText(
+                    introMessage,
+                    introMessage.dataset.text, +introMessage.dataset.speed || 40,
+                    () => {
+                        tapHint.style.display = 'block';
+                    }
+                );
+            };
+            runIntroTyping();
 
             /* Reveal Invitation */
             const revealInvitation = () => {
@@ -375,28 +439,7 @@
                 revealInvitation();
             });
 
-            /* Typing Animation */
-            const typeText = (el, text, speed, cb) => {
-                if (!el) return;
-                el.classList.add('typing-cursor');
-                el.textContent = '';
-                let i = 0;
-                const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-                if (reduced) {
-                    el.textContent = text;
-                    el.classList.remove('typing-cursor');
-                    if (typeof cb === "function") cb();
-                    return;
-                }
-                const timer = setInterval(() => {
-                    el.textContent += text[i++];
-                    if (i >= text.length) {
-                        clearInterval(timer);
-                        el.classList.remove('typing-cursor');
-
-                    }
-                }, speed);
-            };
+            /* Sequence typing inside invite */
             const runTypingSequence = () => {
                 const lines = inviteCard.querySelectorAll('.typing-line');
                 let idx = 0;
@@ -442,7 +485,7 @@
                 runaway(noBtn);
             });
 
-            /* Shrink "No" + Cycle Messages */
+            /* Shrink "No" + Cycle Messages (still runs in addition to runaway) */
             safeAdd(noBtn, 'click', () => {
                 noSize = Math.max(0.2, noSize - 0.1);
                 noBtn.style.transform = `scale(${noSize})`;
@@ -495,6 +538,43 @@
                 }
             });
         });
+
+        /* Typing Animation with sentence pauses */
+        const typeText = (el, text, speed, cb) => {
+            if (!el) return;
+            el.classList.add('typing-cursor');
+            el.textContent = '';
+            let i = 0;
+            const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (reduced) {
+                el.textContent = text;
+                el.classList.remove('typing-cursor');
+                if (typeof cb === "function") cb();
+                return;
+            }
+
+            const typeNext = () => {
+                if (i < text.length) {
+                    el.textContent += text[i];
+                    let delay = speed;
+
+                    // Add pause for punctuation
+                    if (/[.?!]/.test(text[i])) {
+                        delay = speed * 10; // pause longer on sentences
+                    } else if (/[,;]/.test(text[i])) {
+                        delay = speed * 5; // shorter pause for commas
+                    }
+
+                    i++;
+                    setTimeout(typeNext, delay);
+                } else {
+                    el.classList.remove('typing-cursor');
+                    if (typeof cb === "function") cb();
+                }
+            };
+
+            typeNext();
+        };
     </script>
 </body>
 
