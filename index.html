@@ -121,7 +121,7 @@
         .invite-card {
             display: none;
             position: relative;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 195, 233, 0.95);
             padding: 20px;
             margin-top: 20px;
             max-width: 90%;
@@ -129,7 +129,7 @@
             color: black;
             border: 8px solid #ff4d88;
             image-rendering: pixelated;
-            box-shadow: 0 0 0 4px #fff, 0 0 0 8px #ff4d88, 0 0 20px rgba(255, 77, 136, 0.8);
+            box-shadow: 0 0 0 4px rgba(255, 195, 233, 0.95), 0 0 0 8px #ff4d88, 0 0 20px rgba(255, 77, 136, 0.8);
             animation: fadeIn .8s ease forwards;
         }
         
@@ -214,6 +214,7 @@
         .typing-line {
             font-size: 0.85rem;
             line-height: 1.4;
+            color: white;
             white-space: pre-wrap;
             /* preserve your message spacing */
         }
@@ -325,10 +326,10 @@ You make even the simplest days feel special, I love how you make me feel specia
         </div>
 
         <div id="invite" class="invite-card" aria-hidden="true">
-            <h3 class="typing-line" data-text="You said YES!" data-speed="10"></h3>
-            <p class="typing-line" data-text="📍 Place:---" data-speed="10"></p>
-            <p class="typing-line" data-text="🗓 Date: ---" data-speed="10"></p>
-            <p class="typing-line" data-text="💬 Can’t wait to see you. Dress comfy, I’ll handle the rest 💕" data-speed="10"></p>
+            <p class="typing-line" data-text="You said YES!" data-speed="40" style="font-size: 1.1rem;"></p>
+            <p class="typing-line" data-text="📍 Place: Around Lipa City" data-speed="40"></p>
+            <p class="typing-line" data-text="🗓 Date: August 20, 2025" data-speed="40"></p>
+            <p class="typing-line" data-text="💬 Can’t wait to see you. Dress comfy, I’ll handle the rest 💕" data-speed="40"></p>
 
             <button class="retro-btn" id="moreBtn" aria-expanded="false" aria-controls="moreText">MORE DETAILS</button>
 
