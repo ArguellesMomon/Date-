@@ -269,6 +269,39 @@
             }
         }
         
+        #pre-intro-screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.85);
+            color: #ffc8e3;
+            text-align: center;
+            padding: 1rem;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        
+        #pre-intro-message {
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            text-align: center;
+        }
+        
+        #pre-tap-hint {
+            display: none;
+            animation: blink 1s step-start infinite;
+        }
+        
+        #intro-screen {
+            display: none;
+            /* hide until pre-intro is done */
+        }
+        
         #intro-screen {
             position: fixed;
             inset: 0;
@@ -283,7 +316,6 @@
             cursor: pointer;
             z-index: 999;
         }
-        /* Only hide the tap hint initially */
         
         #tap-hint {
             display: none;
@@ -306,6 +338,12 @@
 </head>
 
 <body>
+    <!-- Pre-Intro Screen -->
+    <div id="pre-intro-screen" aria-hidden="false">
+        <p id="pre-intro-message" class="typing-line" aria-live="polite" aria-atomic="true" data-text="Hi, hope you'll like this simple thing I did 💕" data-speed="70"></p>
+        <p id="pre-tap-hint" style="display:none; margin-top:1.5rem;"> Tap to continue...💖</p>
+    </div>
+
     <!-- Intro -->
     <div id="intro-screen" aria-hidden="false">
         <p id="intro-message" class="typing-line" aria-live="polite" aria-atomic="true" data-text="To my Rein, I know I’m not great with messages, but I just want to tell you how thankful I am for having you in my life. Words can’t justify the feelings I want to express. Yet, let this short message turn what I feel into words. 
@@ -395,7 +433,41 @@ You make even the simplest days feel special, I love how you make me feel specia
                 }, speed);
             };
 
-            /* Run Intro Typing (replaces blink) */
+            const preIntro = document.getElementById('pre-intro-screen');
+            const preIntroMessage = document.getElementById('pre-intro-message');
+            const preTapHint = document.getElementById('pre-tap-hint');
+
+            /* Typing animation for pre-intro */
+            const runPreIntroTyping = () => {
+                typeText(
+                    preIntroMessage,
+                    preIntroMessage.dataset.text, +preIntroMessage.dataset.speed || 50,
+                    () => {
+                        preTapHint.style.display = 'block';
+                    }
+                );
+            };
+            runPreIntroTyping();
+
+            /* When Pre-Intro is clicked → move to Intro */
+            const revealIntro = () => {
+                preIntro.classList.add('fade-out');
+                preIntro.addEventListener('animationend', () => {
+                    preIntro.remove();
+                    intro.style.display = 'flex';
+                    intro.setAttribute('aria-hidden', 'false');
+                    runIntroTyping(); // start your long heartfelt message typing
+                }, {
+                    once: true
+                });
+            };
+            preIntro.addEventListener('click', revealIntro);
+            preIntro.addEventListener('touchstart', e => {
+                e.preventDefault();
+                revealIntro();
+            });
+
+
             const runIntroTyping = () => {
                 typeText(
                     introMessage,
@@ -562,5 +634,9 @@ You make even the simplest days feel special, I love how you make me feel specia
         };
     </script>
 </body>
+
+<footer style="position:fixed;bottom:10px;left:50%;transform:translateX(-50%);font-size:0.7rem;z-index:1;color:#ffc8e3;">
+    Made with 💻 + 💖 by your Mers
+</footer>
 
 </html>
