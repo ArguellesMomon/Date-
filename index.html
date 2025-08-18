@@ -269,39 +269,6 @@
             }
         }
         
-        #pre-intro-screen {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.85);
-            color: #ffc8e3;
-            text-align: center;
-            padding: 1rem;
-            cursor: pointer;
-            z-index: 1000;
-        }
-        
-        #pre-intro-message {
-            max-width: 600px;
-            margin: 0 auto;
-            font-size: 1.2rem;
-            line-height: 1.6;
-            text-align: center;
-        }
-        
-        #pre-tap-hint {
-            display: none;
-            animation: blink 1s step-start infinite;
-        }
-        
-        #intro-screen {
-            display: none;
-            /* hide until pre-intro is done */
-        }
-        
         #intro-screen {
             position: fixed;
             inset: 0;
@@ -338,18 +305,17 @@
 </head>
 
 <body>
-    <!-- Pre-Intro Screen -->
-    <div id="pre-intro-screen" aria-hidden="false">
-        <p id="pre-intro-message" class="typing-line" aria-live="polite" aria-atomic="true" data-text="Hi, hope you'll like this simple thing I did 💕" data-speed="70"></p>
-        <p id="pre-tap-hint" style="display:none; margin-top:1.5rem;"> Tap to continue...💖</p>
-    </div>
-
     <!-- Intro -->
     <div id="intro-screen" aria-hidden="false">
-        <p id="intro-message" class="typing-line" aria-live="polite" aria-atomic="true" data-text="To my Rein, I know I’m not great with messages, but I just want to tell you how thankful I am for having you in my life. Words can’t justify the feelings I want to express. Yet, let this short message turn what I feel into words. 
+        <p id="intro-message" class="typing-line" aria-live="polite" aria-atomic="true" data-text="To the one who holds my heart, my Rein 💙,
+        
+I know I’m not always the best with words, but I really want you to know how thankful I am for having you in my life. Sometimes I find myself at a loss for the right things to say, because words will never be enough to capture how much you mean to me. Yet, let me try to show you in this short message what you deserve to hear. 
 
-You make even the simplest days feel special, I love how you make me feel special, which I have not felt in a long time. Thank you for being my safe place, my happiness, and one of my greatest treasures. No matter what happens, I want you to know that I’ll always choose you and appreciate you."
-            data-speed="60"></p>
+You make even the simplest days feel extraordinary, even with the simple conversations we have or just spending time with you, everything instantly feels lighter and brighter. I love how you make me feel seen , valued, and cared for in ways I haven’t felt in such a long time. You’ve given me a kind of happiness I didn’t even realize I was missing, and I’ll always be grateful for that. Thank you for being my safe place, my happiness, and one of my greatest treasures.
+
+No matter what happens, no matter where life takes us, I want you to know that I will always choose you. I will always appreciate you, stand by you, and love you for everything that you are.
+
+-Mers" data-speed="60"></p>
 
         <p id="tap-hint" style="display:none; margin-top:1.5rem;"> Tap to continue...💖</p>
     </div>
@@ -432,41 +398,6 @@ You make even the simplest days feel special, I love how you make me feel specia
                     }
                 }, speed);
             };
-
-            const preIntro = document.getElementById('pre-intro-screen');
-            const preIntroMessage = document.getElementById('pre-intro-message');
-            const preTapHint = document.getElementById('pre-tap-hint');
-
-            /* Typing animation for pre-intro */
-            const runPreIntroTyping = () => {
-                typeText(
-                    preIntroMessage,
-                    preIntroMessage.dataset.text, +preIntroMessage.dataset.speed || 50,
-                    () => {
-                        preTapHint.style.display = 'block';
-                    }
-                );
-            };
-            runPreIntroTyping();
-
-            /* When Pre-Intro is clicked → move to Intro */
-            const revealIntro = () => {
-                preIntro.classList.add('fade-out');
-                preIntro.addEventListener('animationend', () => {
-                    preIntro.remove();
-                    intro.style.display = 'flex';
-                    intro.setAttribute('aria-hidden', 'false');
-                    runIntroTyping(); // start your long heartfelt message typing
-                }, {
-                    once: true
-                });
-            };
-            preIntro.addEventListener('click', revealIntro);
-            preIntro.addEventListener('touchstart', e => {
-                e.preventDefault();
-                revealIntro();
-            });
-
 
             const runIntroTyping = () => {
                 typeText(
